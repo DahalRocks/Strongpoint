@@ -33,6 +33,8 @@ namespace Strongpoint
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //services.AddDbContext<SQLDBNORGEContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionToNorge")));
+            //services.AddDbContext<SQLDBSVERIGEContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionToSverige")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
