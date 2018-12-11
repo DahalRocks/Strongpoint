@@ -59,38 +59,46 @@
             }
         });
  //Get Report List       
-        $.ajax({
-            type: "Get",
-            url: "/api/ReportApi",
-            contentType: "json",
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    tableHtml=''
-                    tableHtml += '<tr class="rowInfo">'
-                    tableHtml += '<td>'+item.fakturaNumber+'</td>'
-                    tableHtml += '<td>' + item.leverendørNavn + '</td>'
-                    tableHtml += '<td>' + item.attesteradAv + '</td>'
-                    tableHtml += '<td>' + item.komment + '</td>'
-                    tableHtml += '</tr>'
-                    $("#tblList").append(tableHtml);
-                });
-            }
-        });
-    //Get Report Using Search Options  
-
-
-        $("#btnSearch").click(function () {
+        function getReportList() {
+            $('.rowInfo').remove();
+            $.ajax({
+                type: "Get",
+                url: "/api/ReportApi",
+                contentType: "json",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        tableHtml = ''
+                        tableHtml += '<tr class="rowInfo">'
+                        tableHtml += '<td>' + item.fakturaNumber + '</td>'
+                        tableHtml += '<td>' + item.leverendørNavn + '</td>'
+                        tableHtml += '<td>' + item.attesteradAv + '</td>'
+                        tableHtml += '<td>' + item.komment + '</td>'
+                        tableHtml += '</tr>'
+                        $("#tblList").append(tableHtml);
+                    });
+                }
+            });
+        }
+        getReportList();
+        
+ //Get Report Using Search Options  
+        function handleSearchClick(e) {
+            e.preventDefault();
             var fraDato = $("input[name='fraDato']").val();
             var tillDato = $("input[name='tillDato']").val();
             var fakturaNummer = $("input[name='fakturaNummer']").val();
             var leverendørId = $('#dropdownLeverendør').val();
+            if (!$.isNumeric(fakturaNummer) && fakturaNummer!='') {
+                alert('Faktura number should be in number format');
+                $('input[name="fakturaNummer"]').val('');
+                return;
+            }
             var data = {
                 FakturaNummer: fakturaNummer,
                 FraDato: fraDato,
                 TillDato: tillDato,
                 LeverendørId: leverendørId
             }
-           
             $.ajax({
                 type: "POST",
                 url: "/api/ReportApi/usingsearch",
@@ -117,7 +125,18 @@
                     }
                 }
             });
-        });
+        }
+        $('input[name="btnSearch"]').on('click', handleSearchClick);
+ //Clear Search Fields
+        function handleClearClick(e) {
+            e.preventDefault();
+            $('input[name="fakturaNummer"]').val('');
+            $('input[name="fraDato"]').val('');
+            $('input[name="tillDato"]').val('');
+            $('#dropdownLeverendør').prop('selectedIndex', 0);
+            getReportList();
+        }
+        $('input[name="btnClear"]').on('click', handleClearClick);
         var $j = jQuery.noConflict();
         $("input[name='fraDato']").datepicker();
         $("input[name='tillDato']").datepicker();
