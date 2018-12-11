@@ -1,94 +1,125 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Title</title>
+    <link rel="stylesheet" href="~/css/jquery-ui.css" type="text/css">
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery/dist/jquery-ui.js"></script>
+    
+    <style>
+        tr.spaceUnder > td {
+            padding-bottom: 10em;
+        }
 
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="~/images/banner1.svg" alt="ASP.NET" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how to build ASP.NET apps that can run anywhere.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner2.svg" alt="Visual Studio" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    There are powerful new features in Visual Studio for building modern web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525030&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner3.svg" alt="Microsoft Azure" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how Microsoft's Azure cloud platform allows you to build, deploy, and scale web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525027&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
+    </style>
 
-<div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET Core MVC</li>
-            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
+</head>
+<body>
+    <h1>Faktura</h1>
+    <div style=" width:600px;height:200px;border:2px black solid ">
+        <p style="font-weight:bold">Search Options</p>
+        <table style="border-spacing:0 10px;border-collapse:separate">
+            <tr><td>Faktura Nummer:</td><td><input type="text" name="fakturaNummer" /> </td></tr>
+            <tr><td>Leverendør:</td><td id="leverendør"> </td></tr>
+            <tr><td>Fra dato:</td><td><input type="text" id="datepicker" name="fraDato" /> </td><td>Till dato:</td><td><input type="text" name="tillDato" /> </td></tr>
+            <tr><td><input type="button" name="btnSearch" value="Search" /></td><td><input type="button" name="btnClear" value="Clear" /></td></tr>
+        </table>
     </div>
-    <div class="col-md-3">
-        <h2>How to</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398600">Add a Controller and View</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
-        </ul>
+    <div>
+        <table style="width:100%" id="tblList">
+            <tr>
+                <th>Faktura Number</th>
+                <th>Leverandør Navn</th>
+                <th>Attesterad Av</th>
+                <th>Eventuella Kommentarer</th>
+
+            </tr>
+        </table>
     </div>
-    <div class="col-md-3">
-        <h2>Overview</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
-        </ul>
-    </div>
-</div>
+</body>
+</html>
+
+
+<script>
+    
+    $(document).ready(function () {
+        var tableHtml = '';
+        var leverendørDropDown = $('<select id="dropdownLeverendør" />');
+//Get Leverandør for DropBox
+        $.ajax({
+            type: "Get",
+            url: "/api/Leverendør",
+            contentType: "json",
+            success: function (data) {
+                $('<option />', { value: '', text: 'SELECT' }).appendTo(leverendørDropDown);
+                $.each(data, function (i, item) {
+                    $('<option />', { value: item.id, text: item.navn }).appendTo(leverendørDropDown);
+                });
+                leverendørDropDown.appendTo('#leverendør');
+            }
+        });
+ //Get Report List       
+        $.ajax({
+            type: "Get",
+            url: "/api/ReportApi",
+            contentType: "json",
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    tableHtml=''
+                    tableHtml += '<tr class="rowInfo">'
+                    tableHtml += '<td>'+item.fakturaNumber+'</td>'
+                    tableHtml += '<td>' + item.leverendørNavn + '</td>'
+                    tableHtml += '<td>' + item.attesteradAv + '</td>'
+                    tableHtml += '<td>' + item.komment + '</td>'
+                    tableHtml += '</tr>'
+                    $("#tblList").append(tableHtml);
+                });
+            }
+        });
+    //Get Report Using Search Options  
+
+
+        $("#btnSearch").click(function () {
+            var fraDato = $("input[name='fraDato']").val();
+            var tillDato = $("input[name='tillDato']").val();
+            var fakturaNummer = $("input[name='fakturaNummer']").val();
+            var leverendørId = $('#dropdownLeverendør').val();
+            var data = {
+                FakturaNummer: fakturaNummer,
+                FraDato: fraDato,
+                TillDato: tillDato,
+                LeverendørId: leverendørId
+            }
+           
+            $.ajax({
+                type: "POST",
+                url: "/api/ReportApi/usingsearch",
+                contentType: "application / json; charset=utf - 8",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response != '') {
+                        $('.rowInfo').remove();
+                        $.each(response, function (i, item) {
+                            tableHtml = ''
+                            tableHtml += '<tr class="rowInfo">'
+                            tableHtml += '<td>' + item.fakturaNumber + '</td>'
+                            tableHtml += '<td>' + item.leverendørNavn + '</td>'
+                            tableHtml += '<td>' + item.attesteradAv + '</td>'
+                            tableHtml += '<td>' + item.komment + '</td>'
+                            tableHtml += '</tr>'
+                            $("#tblList").append(tableHtml);
+                        });
+                    }
+                    else {
+                        $('.rowInfo').remove();
+                        tableHtml = '<tr class="rowInfo"><td>No Record Was Found </td>';
+                        $("#tblList").append(tableHtml);
+                    }
+                }
+            });
+        });
+        var $j = jQuery.noConflict();
+        $("input[name='fraDato']").datepicker();
+        $("input[name='tillDato']").datepicker();
+    });
+</script>
