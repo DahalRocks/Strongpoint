@@ -15,11 +15,13 @@ namespace Strongpoint.Controllers
     public class ReportApiController : ControllerBase
     {
         private readonly SQLDBNORGEContext _dbNorge;
+        private readonly SQLDBSVERIGEContext _dbSverige;
         [BindProperty]
         public ReportViewModel ReportVM { get; set; }
-        public ReportApiController(SQLDBNORGEContext dbNorge)
+        public ReportApiController(SQLDBNORGEContext dbNorge,SQLDBSVERIGEContext dbSverige)
         {
             _dbNorge = dbNorge;
+            _dbSverige = dbSverige;
             ReportVM = new ReportViewModel()
             {
                 Faktura = new Models.Faktura(),
@@ -39,7 +41,7 @@ namespace Strongpoint.Controllers
             //                                   .Where(c => user == "" || c.Users.uName.ToLower().Contains(user.ToLower()))
             //                                   .Where(c => alarm == "" || c.AlarmCodes.aName.ToLower().Contains(alarm.ToLower()))
             //                                   .OrderBy(c => c.dateTime).Skip(skip).Take(pageSize).ToList();
-            var faktura = (from f in _dbNorge.Faktura
+            var fakturaFraNorge = (from f in _dbNorge.Faktura
                            from l in _dbNorge.Leverendør.Where(x => x.Id == f.LeverendørId)
                            select new
                            {
@@ -48,16 +50,27 @@ namespace Strongpoint.Controllers
                                attesteradAv=l.AttesteradAv,
                                komment=l.EventuellaKommentarer
                            }).ToList();
-            return faktura;
+            var fakturaFraSverige = (from f in _dbSverige.Faktura
+                           from l in _dbSverige.Leverendør.Where(x => x.Id == f.LeverendørId)
+                           select new
+                           {
+                               fakturaNumber = f.FakturaNummer,
+                               leverendørNavn = l.Navn,
+                               attesteradAv = l.AttesteradAv,
+                               komment = l.EventuellaKommentarer
+                           }).ToList();
+            return fakturaFraNorge;
+           //var finalResult= from n in fakturaFraNorge
+           //                 join s in fakturaFraSverige on 
 
-            //var faktura = (from f in _dbNorge.Faktura
+            //var fakturaFraNorge = (from f in _dbNorge.Faktura
             //               from l in _dbNorge.Leverendør.Where(x => (x.Id == f.LeverendørId) && (f.FakturaNummer == 1004))
             //               select new
             //               {
             //                   fakturaNumber = f.FakturaNummer,
             //                   leverendørNavn = l.Navn
             //               }).ToList();
-            //var faktura = (from f in _dbNorge.Faktura
+            //var fakturaFraNorge = (from f in _dbNorge.Faktura
             //               from l in _dbNorge.Leverendør.Where(x => (x.Id == f.LeverendørId) && (x.Id == 3))
             //               select new
             //               {
