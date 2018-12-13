@@ -34,34 +34,34 @@ namespace Strongpoint.Models
         {
             modelBuilder.Entity<Faktura>(entity =>
             {
-                entity.HasKey(e => e.FakturaNummer);
+                entity.HasKey(e => e.Faktura_Nummer);
 
-                entity.Property(e => e.FakturaNummer).HasColumnName("Faktura_Nummer");
+                entity.Property(e => e.Faktura_Nummer).HasColumnName("Faktura_Nummer");
 
-                entity.Property(e => e.DatumIntervall)
+                entity.Property(e => e.Datum_Intervall)
                     .HasColumnName("Datum_Intervall")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.LeverendørId).HasColumnName("Leverendør_ID");
+                entity.Property(e => e.Leverendør_Id).HasColumnName("Leverendør_ID");
             });
 
             modelBuilder.Entity<Leverendør>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.AttesteradAv).HasColumnName("Attesterad_Av");
+                entity.Property(e => e.Attesterad_Av).HasColumnName("Attesterad_Av");
 
-                entity.Property(e => e.EventuellaKommentarer).HasColumnName("Eventuella_Kommentarer");
+                entity.Property(e => e.Eventuella_Kommentarer).HasColumnName("Eventuella_Kommentarer");
 
-                entity.Property(e => e.InkjøpsNummer)
+                entity.Property(e => e.Inkjøps_Nummer)
                     .HasColumnName("Inkjøps_Nummer")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.KundeNummer)
+                entity.Property(e => e.Kunde_Nummer)
                     .HasColumnName("Kunde_Nummer")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.LøpeNummer)
+                entity.Property(e => e.Løpe_Nummer)
                     .HasColumnName("Løpe_Nummer")
                     .HasMaxLength(50);
             });

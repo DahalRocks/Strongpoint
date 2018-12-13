@@ -42,26 +42,26 @@ namespace Strongpoint.Controllers
             //                                   .Where(c => alarm == "" || c.AlarmCodes.aName.ToLower().Contains(alarm.ToLower()))
             //                                   .OrderBy(c => c.dateTime).Skip(skip).Take(pageSize).ToList();
             var fakturaFraNorge = (from f in _dbNorge.Faktura
-                           from l in _dbNorge.Leverendør.Where(x => x.Id == f.LeverendørId)
+                           from l in _dbNorge.Leverendør.Where(x => x.Id == f.Leverendør_Id)
                            select new
                            {
-                               fakturaNumber = f.FakturaNummer,
+                               fakturaNumber = f.Faktura_Nummer,
                                leverendørNavn = l.Navn,
-                               attesteradAv=l.AttesteradAv,
-                               komment=l.EventuellaKommentarer
+                               attesteradAv=l.Attesterad_Av,
+                               komment=l.Eventuella_Kommentarer
                            }).ToList();
             var fakturaFraSverige = (from f in _dbSverige.Faktura
-                           from l in _dbSverige.Leverendør.Where(x => x.Id == f.LeverendørId)
+                           from l in _dbSverige.Leverendør.Where(x => x.Id == f.Leverendør_Id)
                            select new
                            {
-                               fakturaNumber = f.FakturaNummer,
+                               fakturaNumber = f.Faktura_Nummer,
                                leverendørNavn = l.Navn,
-                               attesteradAv = l.AttesteradAv,
-                               komment = l.EventuellaKommentarer
+                               attesteradAv = l.Attesterad_Av,
+                               komment = l.Eventuella_Kommentarer
                            }).ToList();
             return fakturaFraNorge;
-           //var finalResult= from n in fakturaFraNorge
-           //                 join s in fakturaFraSverige on 
+            //var finalResult = from n in fakturaFraNorge
+            //                  join s in fakturaFraSverige on 
 
             //var fakturaFraNorge = (from f in _dbNorge.Faktura
             //               from l in _dbNorge.Leverendør.Where(x => (x.Id == f.LeverendørId) && (f.FakturaNummer == 1004))
@@ -86,47 +86,47 @@ namespace Strongpoint.Controllers
         public object GetReportUsingSearch([FromBody]Faktura faktura)
         {
             var selectedInfo = (from f in _dbNorge.Faktura
-                           from l in _dbNorge.Leverendør.Where(x => x.Id.Equals(f.LeverendørId))
+                           from l in _dbNorge.Leverendør.Where(x => x.Id.Equals(f.Leverendør_Id))
                            select new
                            {
-                               fakturaNumber = f.FakturaNummer,
+                               fakturaNumber = f.Faktura_Nummer,
                                leverendørNavn = l.Navn,
                                leverendørId = l.Id,
-                               datoIntervall = f.DatumIntervall,
-                               attesteradAv = l.AttesteradAv,
-                               komment = l.EventuellaKommentarer
+                               datoIntervall = f.Datum_Intervall,
+                               attesteradAv = l.Attesterad_Av,
+                               komment = l.Eventuella_Kommentarer
 
                            }).ToList();
             var filteredResult = new Object();
-            if (faktura.LeverendørId != null && faktura.FakturaNummer != null && faktura.FraDato != null && faktura.TillDato != null)
+            if (faktura.Leverendør_Id != null && faktura.Faktura_Nummer != null && faktura.FraDato != null && faktura.TillDato != null)
             {
-                filteredResult = selectedInfo.Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.FakturaNummer)
-                .Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.LeverendørId)
+                filteredResult = selectedInfo.Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.Faktura_Nummer)
+                .Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.Leverendør_Id)
                 .Where(f => f.datoIntervall>faktura.FraDato && f.datoIntervall<faktura.TillDato).ToList();
             }
-            else if (faktura.FakturaNummer != null && faktura.LeverendørId != null)
+            else if (faktura.Faktura_Nummer != null && faktura.Leverendør_Id != null)
             {
-                filteredResult = selectedInfo.Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.FakturaNummer)
-                .Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.LeverendørId).ToList();
+                filteredResult = selectedInfo.Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.Faktura_Nummer)
+                .Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.Leverendør_Id).ToList();
             }
-            else if (faktura.FakturaNummer != null && faktura.FraDato != null && faktura.TillDato != null)
+            else if (faktura.Faktura_Nummer != null && faktura.FraDato != null && faktura.TillDato != null)
             {
                 filteredResult = selectedInfo.Where(f => f.datoIntervall >= faktura.FraDato && f.datoIntervall <= faktura.TillDato)
-                .Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.FakturaNummer).ToList();
+                .Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.Faktura_Nummer).ToList();
             }
-            else if (faktura.LeverendørId != null && faktura.FraDato != null && faktura.TillDato != null)
+            else if (faktura.Leverendør_Id != null && faktura.FraDato != null && faktura.TillDato != null)
             {
                 filteredResult = selectedInfo.Where(f => f.datoIntervall >= faktura.FraDato && f.datoIntervall <= faktura.TillDato)
-                .Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.LeverendørId).ToList();
+                .Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.Leverendør_Id).ToList();
             }
-            else if (faktura.FakturaNummer != null)
+            else if (faktura.Faktura_Nummer != null)
             {
-                filteredResult = selectedInfo.Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.FakturaNummer)
+                filteredResult = selectedInfo.Where(f => f.fakturaNumber == ' ' || f.fakturaNumber == faktura.Faktura_Nummer)
                 .ToList();
             }
-            else if (faktura.LeverendørId != null)
+            else if (faktura.Leverendør_Id != null)
             {
-                filteredResult = selectedInfo.Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.LeverendørId)
+                filteredResult = selectedInfo.Where(f => f.leverendørId == ' ' || f.leverendørId == faktura.Leverendør_Id)
                 .ToList();
             }
             else if(faktura.FraDato != null && faktura.TillDato != null)

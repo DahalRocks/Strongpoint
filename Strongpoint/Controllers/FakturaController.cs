@@ -56,7 +56,7 @@ namespace Strongpoint.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != faktura.FakturaNummer)
+            if (id != faktura.Faktura_Nummer)
             {
                 return BadRequest();
             }
@@ -94,7 +94,7 @@ namespace Strongpoint.Controllers
             _context.Faktura.Add(faktura);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFaktura", new { id = faktura.FakturaNummer }, faktura);
+            return CreatedAtAction("GetFaktura", new { id = faktura.Faktura_Nummer }, faktura);
         }
 
         // DELETE: api/Faktura/5
@@ -120,7 +120,7 @@ namespace Strongpoint.Controllers
 
         private bool FakturaExists(int id)
         {
-            return _context.Faktura.Any(e => e.FakturaNummer == id);
+            return _context.Faktura.Any(e => e.Faktura_Nummer == id);
         }
     }
 }

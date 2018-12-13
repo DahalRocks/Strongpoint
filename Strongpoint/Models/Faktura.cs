@@ -7,13 +7,13 @@ namespace Strongpoint.Models
 {
     public class Faktura
     {
-        public int? FakturaNummer { get; set; }
+        public int? Faktura_Nummer { get; set; }
         [Display(Name ="Leverendør")]
-        public int? LeverendørId { get; set; }
-        [ForeignKey("LeverendørId")]
+        public int? Leverendør_Id { get; set; }
+        [ForeignKey("Leverendør_Id")]
         public virtual Leverendør Leverendør { get; set; }
 
-        public DateTime? DatumIntervall { get; set; }
+        public DateTime? Datum_Intervall { get; set; }
         [NotMapped]
         public DateTime? FraDato { get; set; }
         [NotMapped]
