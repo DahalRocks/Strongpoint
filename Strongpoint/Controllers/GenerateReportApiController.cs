@@ -13,21 +13,22 @@ namespace Strongpoint.Controllers
     public class GenerateReportApiController : ControllerBase
     {
 
+        private int pageNumber=0;
         private readonly IReportRepository _reportRepository;
         public GenerateReportApiController(IReportRepository reportRepository)
         {
             _reportRepository = reportRepository;
         }
-        // GET: api/GenerateReportApi
+        
         [HttpGet]
-        public async Task<object> Get()
+        public void Get()
         {
-            return await _reportRepository.GetReport();
+            
         }
 
         // GET: api/GenerateReportApi/5
         [HttpPost]
-        [Route("{byfakturanummer}")]
+        [Route("{bysearch}")]
         public async Task<object> Get([FromBody]Faktura faktura)
         {
             return await _reportRepository.GetReportBySearch(faktura);
@@ -35,8 +36,9 @@ namespace Strongpoint.Controllers
 
         // POST: api/GenerateReportApi
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<object> Post([FromBody] Faktura faktura)
         {
+            return await _reportRepository.GetReport(faktura);
         }
 
         // PUT: api/GenerateReportApi/5

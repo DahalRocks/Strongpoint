@@ -8,7 +8,7 @@ namespace Strongpoint.Models
 {
     public interface IReportRepository
     {
-        Task<object> GetReport();
+        Task<object> GetReport(Faktura paging);
         Task<object> GetReportBySearch(Faktura faktura);
         
     }

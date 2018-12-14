@@ -18,5 +18,8 @@ namespace Strongpoint.Models
         public DateTime? FraDato { get; set; }
         [NotMapped]
         public DateTime? TillDato { get; set; }
+        public int? CurrentPage { get; set; }
+        public int? PageSize { get; set; }
+        public int? TotalRows { get; set; }
     }
 }

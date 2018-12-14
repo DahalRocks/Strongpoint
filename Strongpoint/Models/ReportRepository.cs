@@ -32,7 +32,7 @@ namespace Strongpoint.Models
             }
         }
 
-        public async Task<object> GetReport()
+        public async Task<object> GetReport(Faktura pagingInfo)
         {
             using (IDbConnection conn = ConnectionToNorge)
                 using(IDbConnection connSv=ConnectionToSverige)
@@ -44,7 +44,7 @@ namespace Strongpoint.Models
                     {
                         f.Leverendør = l;
                         return f;
-                    },
+                    }, new { PageNumber = pagingInfo.CurrentPage, PageSize = pagingInfo.PageSize},
                     commandType: CommandType.StoredProcedure
                     );
                 var resultSv= await connSv.QueryAsync<Faktura, Leverendør, Faktura>(
@@ -53,7 +53,7 @@ namespace Strongpoint.Models
                     {
                         f.Leverendør = l;
                         return f;
-                    },
+                    }, new { PageNumber = pagingInfo.CurrentPage, PageSize = pagingInfo.PageSize },
                     commandType: CommandType.StoredProcedure
                     );
                 var finalResult = result.Concat(resultSv);
@@ -63,8 +63,8 @@ namespace Strongpoint.Models
 
         public async Task<object> GetReportBySearch(Faktura faktura)
         {
-            var pageSize = 5;
-            var pageNumber = 1;
+            var pageSize = faktura.PageSize;
+            var pageNumber = faktura.CurrentPage;
             using (IDbConnection conn = ConnectionToNorge)
             using (IDbConnection connSv = ConnectionToSverige)
             {

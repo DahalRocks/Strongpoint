@@ -73,7 +73,8 @@
         var tableHtml = '';
         var leverendørDropDown = $('<select id="dropdownLeverendør" />');
         var currentPage = 1;
-        var pageSize = 50;
+        var pageSize = 2;
+        var initialPage = 1;
         //Get Leverandør for DropBox
         $.ajax({
             type: "Get",
@@ -113,12 +114,19 @@
         //Get Report List
         function getReportList() {
             $('.rowInfo').remove();
+            var data = {
+                    
+                        CurrentPage: currentPage,
+                        PageSize: pageSize
+                    
+            }
             $.ajax({
-                type: "Get",
-                url: "api/GenerateReportApi",
-                contentType: "json",
-                success: function (data) {
-                    $.each(data, function (i, item) {
+                type: "POST",
+                url: "/api/GenerateReportApi",
+                contentType: "application / json; charset=utf - 8",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    $.each(response, function (i, item) {
                         tableHtml = ''
                         tableHtml += '<tr class="rowInfo">'
                         tableHtml += '<td>' + item.faktura_Nummer + '</td>'
@@ -128,18 +136,17 @@
                         tableHtml += '</tr>'
                         $("#tblList").append(tableHtml);
                     });
-
                 }
             });
         }
         getReportList();
 
         //Get Report Using Search Options
-        function handleSearchClick(e) {
-            e.preventDefault();
+        function getReportListBySearch() {
             var fraDato = $("input[name='fraDato']").val();
             var tillDato = $("input[name='tillDato']").val();
             var fakturaNummer = $("input[name='fakturaNummer']").val();
+            
             var leverendørId = $('#dropdownLeverendør').val();
             if (!$.isNumeric(fakturaNummer) && fakturaNummer != '') {
                 alert('Faktura number should be in number format');
@@ -150,11 +157,14 @@
                 Faktura_Nummer: fakturaNummer,
                 FraDato: fraDato,
                 TillDato: tillDato,
-                Leverendør_Id: leverendørId
+                Leverendør_Id: leverendørId,
+                CurrentPage: currentPage,
+                PageSize: pageSize
+
             }
             $.ajax({
                 type: "POST",
-                url: "/api/GenerateReportApi/byfakturanummer",
+                url: "/api/GenerateReportApi/bysearch",
                 contentType: "application / json; charset=utf - 8",
                 data: JSON.stringify(data),
                 success: function (response) {
@@ -179,7 +189,17 @@
                 }
             });
         }
-        $('input[name="btnSearch"]').on('click', handleSearchClick);
+        $(function () {
+            $('input[name="btnSearch"]').click(function (e) {
+                e.preventDefault();
+                currentPage = initialPage;
+                getReportListBySearch();
+                $('#lblPageNumber').text(currentPage);
+                $('input[name="btnNext"]').attr('name', "btnNextSearch");
+                $('input[name="btnPrevious"]').attr('name', "btnPreviousSearch");
+            });
+        });
+        //$('input[name="btnSearch"]').on('click', getReportListBySearch);
         //Clear Search Fields
         function handleClearClick(e) {
             e.preventDefault();
@@ -187,6 +207,7 @@
             $('input[name="fraDato"]').val('');
             $('input[name="tillDato"]').val('');
             $('#dropdownLeverendør').prop('selectedIndex', 0);
+            currentPage = initialPage;
             getReportList();
         }
         $('input[name="btnClear"]').on('click', handleClearClick);
@@ -201,12 +222,34 @@
         });
         //Implement Paging
         $(function () {
-            $['input[name="btnNext"]'].click(function () {
+            $('input[name="btnNext"]').click(function (e) {
+                e.preventDefault();
                 currentPage++;
-                getReportList(currentPage, pageSize);
-
+                alert("form next  button:" + currentPage);
+                getReportList();
+                $('#lblPageNumber').text(currentPage);
+            });
+            $('input[name="btnPrevious"]').click(function (e) {
+                e.preventDefault();
+                currentPage--;
+                getReportList();
+                $('#lblPageNumber').text(currentPage);
+            });
+            $('input[name="btnNextSearch"]').on('click', getReportListSearchNextButton);
+            $('input[name="btnPreviousSearch"]').click(function (e) {
+                e.preventDefault();
+                currentPage--;
+                getReportListBySearch();
+                $('#lblPageNumber').text(currentPage);
             });
         });
+        function getReportListSearchNextButton(e) {
+            e.preventDefault();
+            currentPage++;
+            alert("form next search button:" + currentPage);
+            getReportListBySearch();
+            $('#lblPageNumber').text(currentPage);
+        }
     });
 
 </script>
