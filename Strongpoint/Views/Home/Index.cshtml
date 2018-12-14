@@ -5,12 +5,23 @@
     <link rel="stylesheet" href="~/css/jquery-ui.css" type="text/css">
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery/dist/jquery-ui.js"></script>
-    
-    <style>
-        tr.spaceUnder > td {
-            padding-bottom: 10em;
-        }
 
+    <style>
+        
+        ul{
+            list-style:none;
+            width:100%;
+            height:25px;
+            margin:0;
+            padding:0;
+            
+        }
+        li{
+            float:left;
+        }
+        li p{
+            display:block;
+        }
     </style>
 
 </head>
@@ -25,7 +36,7 @@
             <tr><td><input type="button" name="btnSearch" value="Search" /></td><td><input type="button" name="btnClear" value="Clear" /></td></tr>
         </table>
     </div>
-    <div>
+    <div id="reportTableDiv" style="margin-top:50px">
         <table style="width:100%" id="tblList">
             <tr>
                 <th>Faktura Number</th>
@@ -36,16 +47,34 @@
             </tr>
         </table>
     </div>
+    <div>
+        @using (Html.BeginForm("Export", "ExportToExcel", FormMethod.Post))
+        {
+            <input type="hidden" name="GridHtml" />
+            <input type="submit" id="btnSubmit" value="Export" />
+        }
+    </div>
+    <div style="margin-top:50px">
+        <table>
+            <tr>
+                <td><input type="button" name="btnPrevious" value="Previous" /></td><td><p>Page</p></td><td><label id="lblPageNumber" for="pageNumber">1</label></td>
+                <td><p>of</p></td><td><label id="lblTotalPage" for="totalPage">14457</label></td><td><input type="button" name="btnNext" value="Next" /></td>
+            </tr>
+        </table>
+    </div>
+
 </body>
 </html>
 
 
 <script>
-    
+
     $(document).ready(function () {
         var tableHtml = '';
         var leverendørDropDown = $('<select id="dropdownLeverendør" />');
-//Get Leverandør for DropBox
+        var currentPage = 1;
+        var pageSize = 50;
+        //Get Leverandør for DropBox
         $.ajax({
             type: "Get",
             url: "/api/Leverendør",
@@ -58,7 +87,30 @@
                 leverendørDropDown.appendTo('#leverendør');
             }
         });
- //Get Report List       
+        ////Get Report List
+        //function getReportList() {
+        //    $('.rowInfo').remove();
+        //    $.ajax({
+        //        type: "Get",
+        //        url: "api/GenerateReportApi",
+        //        contentType: "json",
+        //        success: function (data) {
+        //            $.each(data, function (i, item) {
+        //                tableHtml = ''
+        //                tableHtml += '<tr class="rowInfo">'
+        //                tableHtml += '<td>' + item.faktura_Nummer + '</td>'
+        //                tableHtml += '<td>' + item.leverendør.navn + '</td>'
+        //                tableHtml += '<td>' + item.leverendør.attesterad_Av + '</td>'
+        //                tableHtml += '<td>' + item.leverendør.eventuella_Kommentarer + '</td>'
+        //                tableHtml += '</tr>'
+        //                $("#tblList").append(tableHtml);
+        //            });
+                   
+        //        }
+        //    });
+        //}
+        //getReportList();
+        //Get Report List
         function getReportList() {
             $('.rowInfo').remove();
             $.ajax({
@@ -76,20 +128,20 @@
                         tableHtml += '</tr>'
                         $("#tblList").append(tableHtml);
                     });
-                    $("#tblList").append('<tr><td><input type="button" name="btnExcel" value="Export To Excel"/></td></tr>');
+
                 }
             });
         }
         getReportList();
-        
- //Get Report Using Search Options  
+
+        //Get Report Using Search Options
         function handleSearchClick(e) {
             e.preventDefault();
             var fraDato = $("input[name='fraDato']").val();
             var tillDato = $("input[name='tillDato']").val();
             var fakturaNummer = $("input[name='fakturaNummer']").val();
             var leverendørId = $('#dropdownLeverendør').val();
-            if (!$.isNumeric(fakturaNummer) && fakturaNummer!='') {
+            if (!$.isNumeric(fakturaNummer) && fakturaNummer != '') {
                 alert('Faktura number should be in number format');
                 $('input[name="fakturaNummer"]').val('');
                 return;
@@ -128,7 +180,7 @@
             });
         }
         $('input[name="btnSearch"]').on('click', handleSearchClick);
- //Clear Search Fields
+        //Clear Search Fields
         function handleClearClick(e) {
             e.preventDefault();
             $('input[name="fakturaNummer"]').val('');
@@ -141,15 +193,20 @@
         var $j = jQuery.noConflict();
         $("input[name='fraDato']").datepicker();
         $("input[name='tillDato']").datepicker();
-//Export to Excel
-        function exportToExcel(e) {
-            e.preventDefault();
-            alert('hi');
-        }
-       
-        $(document).on('click', 'input[name="btnExcel"]', function () {
-            
+        //Expert to Excel
+        $(function () {
+            $("#btnSubmit").click(function () {
+                $("input[name='GridHtml']").val($("#reportTableDiv").html());
+            });
+        });
+        //Implement Paging
+        $(function () {
+            $['input[name="btnNext"]'].click(function () {
+                currentPage++;
+                getReportList(currentPage, pageSize);
+
+            });
         });
     });
-    
+
 </script>
