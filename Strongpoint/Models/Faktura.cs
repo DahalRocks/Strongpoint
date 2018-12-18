@@ -12,14 +12,16 @@ namespace Strongpoint.Models
         public int? Leverendør_Id { get; set; }
         [ForeignKey("Leverendør_Id")]
         public virtual Leverendør Leverendør { get; set; }
-
         public DateTime? Datum_Intervall { get; set; }
         [NotMapped]
         public DateTime? FraDato { get; set; }
         [NotMapped]
         public DateTime? TillDato { get; set; }
+        [NotMapped]
         public int? CurrentPage { get; set; }
+        [NotMapped]
         public int? PageSize { get; set; }
+        [NotMapped]
         public int? TotalRows { get; set; }
     }
 }

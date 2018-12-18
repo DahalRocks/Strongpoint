@@ -12,45 +12,41 @@ namespace Strongpoint.Controllers
     [ApiController]
     public class GenerateReportApiController : ControllerBase
     {
-
-        private int pageNumber=0;
         private readonly IReportRepository _reportRepository;
         public GenerateReportApiController(IReportRepository reportRepository)
         {
             _reportRepository = reportRepository;
         }
+        [HttpPost]
+        [Route("totalrecordwithoutsearch")]
+        public object GetRecord([FromBody]Faktura faktura)
+        {
+            (object objFakturaList, int totalRecord) = _reportRepository.GetReport(faktura);
+            Faktura objFaktura = new Faktura() { TotalRows = totalRecord };
+            return objFaktura;
+        }
+        [HttpPost]
+        [Route("totalrecordbysearch")]
+        public object GetRecordBySearch([FromBody]Faktura faktura)
+        {
+            (object objFakturaList, int totalRecord) = _reportRepository.GetReportBySearch(faktura);
+            Faktura objFaktura = new Faktura() { TotalRows = totalRecord };
+            return objFaktura;
+        }
+        [HttpPost]
+        [Route("withoutsearch")]
+        public object GetSearchWithOutSearch([FromBody] Faktura faktura)
+        {
+            (object objFakturaList, int totalRecord) =  _reportRepository.GetReport(faktura);
+            return objFakturaList;
+        }
+        [HttpPost]
+        [Route("bysearch")]
+        public object GetSearchBySearch([FromBody]Faktura faktura)
+        {
+            (object objFakturaList, int totalRecord) = _reportRepository.GetReportBySearch(faktura);
+            return objFakturaList;
+        }
         
-        [HttpGet]
-        public void Get()
-        {
-            
-        }
-
-        // GET: api/GenerateReportApi/5
-        [HttpPost]
-        [Route("{bysearch}")]
-        public async Task<object> Get([FromBody]Faktura faktura)
-        {
-            return await _reportRepository.GetReportBySearch(faktura);
-        }
-
-        // POST: api/GenerateReportApi
-        [HttpPost]
-        public async Task<object> Post([FromBody] Faktura faktura)
-        {
-            return await _reportRepository.GetReport(faktura);
-        }
-
-        // PUT: api/GenerateReportApi/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

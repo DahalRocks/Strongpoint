@@ -33,12 +33,18 @@ namespace Strongpoint
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            services.AddMvc().AddSessionStateTempDataProvider();
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<SQLDBNORGEContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionToNorge")));
             services.AddDbContext<SQLDBSVERIGEContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionToSverige")));
             services.AddTransient<IReportRepository, ReportRepository>();
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +59,7 @@ namespace Strongpoint
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -61,9 +67,17 @@ namespace Strongpoint
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "ControllerAndAction",
+                    template: "api/{controller}/{action}");
+            });
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
         }
     }
 }
