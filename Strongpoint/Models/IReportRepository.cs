@@ -8,9 +8,6 @@ namespace Strongpoint.Models
 {
     public interface IReportRepository
     {
-        Tuple<object,int> GetReport(Faktura faktura);
-        /*Task<Tuple<object, int>> GetReport();*/
-        Tuple<object, int> GetReportBySearch(Faktura faktura);
-        
+        Task<Tuple<object,int>> GetReport(Faktura faktura);
     }
 }

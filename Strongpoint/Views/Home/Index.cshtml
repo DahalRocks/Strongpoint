@@ -1,13 +1,13 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Page Title</title>
+    <title>Faktura Record</title>
     <link rel="stylesheet" href="~/css/jquery-ui.css" type="text/css">
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery/dist/jquery-ui.js"></script>
 </head>
 <body>
-    <h1>Faktura</h1>
+    <h1>Faktura Report</h1>
     <div style=" width:600px;height:200px;border:2px black solid ">
         <p style="font-weight:bold">Search Options</p>
         <table style="border-spacing:0 10px;border-collapse:separate">
@@ -30,7 +30,7 @@
     <div>
         @using (Html.BeginForm("Export", "ExportToExcel", FormMethod.Post))
         {
-            <input type="hidden" name="GridHtml" />
+            <input type="hidden" name="hiddenHtml" />
             <input type="submit" id="btnSubmit" value="Export" />
         }
     </div>
@@ -40,9 +40,9 @@
     $(document).ready(function () {
         var tableHtml = '';
         var leverendørDropDown = $('<select id="dropdownLeverendør" />');
-        var currentPage = 1;
-        var pageSize = 50 //each database total 100;
-        var initialPage = 1;
+        $.ajaxSetup({
+            cache: false
+        });
         //Get Leverandør for DropBox
         $.ajax({
             type: "Get",
@@ -56,33 +56,6 @@
                 leverendørDropDown.appendTo('#leverendør');
             }
         });
-        //Get Report List
-        function getReportList() {
-            $('.rowInfo').remove();
-            var data = {
-                CurrentPage: currentPage,
-                PageSize: pageSize
-            }
-            $.ajax({
-                type: "POST",
-                url: "/api/GenerateReportApi/withoutsearch",
-                contentType: "application / json; charset=utf - 8",
-                data: JSON.stringify(data),
-                success: function (response) {
-                    $.each(response, function (i, item) {
-                        tableHtml = ''
-                        tableHtml += '<tr class="rowInfo">'
-                        tableHtml += '<td>' + item.faktura_Nummer + '</td>'
-                        tableHtml += '<td>' + item.leverendør.navn + '</td>'
-                        tableHtml += '<td>' + item.leverendør.attesterad_Av + '</td>'
-                        tableHtml += '<td>' + item.leverendør.eventuella_Kommentarer + '</td>'
-                        tableHtml += '</tr>'
-                        $("#tblList").append(tableHtml);
-                    });
-                }
-            });
-        }
-        getReportList();
         //Get Report Using Search Options
         function getReportListBySearch() {
             var fraDato = $("input[name='fraDato']").val();
@@ -98,15 +71,14 @@
                 Faktura_Nummer: fakturaNummer,
                 FraDato: fraDato,
                 TillDato: tillDato,
-                Leverendør_Id: leverendørId,
-                CurrentPage: currentPage,
-                PageSize: pageSize
+                Leverendør_Id: leverendørId
             }
             $.ajax({
                 type: "POST",
                 url: "/api/GenerateReportApi/bysearch",
                 contentType: "application / json; charset=utf - 8",
                 data: JSON.stringify(data),
+                cache: false,
                 success: function (response) {
                     if (response != '') {
                         $('.rowInfo').remove();
@@ -133,12 +105,10 @@
         $(function () {
             $('input[name="btnSearch"]').click(function (e) {
                 e.preventDefault();
-                currentPage = initialPage;
                 getReportListBySearch();
-                $('#lblPageNumber').text(currentPage);
-                
             });
         });
+        getReportListBySearch();
         //Clear Search Fields
         function handleClearClick(e) {
             e.preventDefault();
@@ -146,9 +116,7 @@
             $('input[name="fraDato"]').val('');
             $('input[name="tillDato"]').val('');
             $('#dropdownLeverendør').prop('selectedIndex', 0);
-            currentPage = initialPage;
-            getReportList();
-            assignTotalPageWithOutSearch();
+            getReportListBySearch();
         }
         $('input[name="btnClear"]').on('click', handleClearClick);
         //Implement jQueryUI Date Picker
@@ -158,7 +126,7 @@
         //Expert to Excel
         $(function () {
             $("#btnSubmit").click(function () {
-                $("input[name='GridHtml']").val($("#reportTableDiv").html());
+                $("input[name='hiddenHtml']").val($("#reportTableDiv").html());
             });
         });
     });

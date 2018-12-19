@@ -21,7 +21,5 @@ namespace Strongpoint.Models
         public int? CurrentPage { get; set; }
         [NotMapped]
         public int? PageSize { get; set; }
-        [NotMapped]
-        public int? TotalRows { get; set; }
     }
 }

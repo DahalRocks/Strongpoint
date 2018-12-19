@@ -18,33 +18,14 @@ namespace Strongpoint.Controllers
             _reportRepository = reportRepository;
         }
         [HttpPost]
-        [Route("totalrecordwithoutsearch")]
-        public object GetRecord([FromBody]Faktura faktura)
-        {
-            (object objFakturaList, int totalRecord) = _reportRepository.GetReport(faktura);
-            Faktura objFaktura = new Faktura() { TotalRows = totalRecord };
-            return objFaktura;
-        }
-        [HttpPost]
-        [Route("totalrecordbysearch")]
-        public object GetRecordBySearch([FromBody]Faktura faktura)
-        {
-            (object objFakturaList, int totalRecord) = _reportRepository.GetReportBySearch(faktura);
-            Faktura objFaktura = new Faktura() { TotalRows = totalRecord };
-            return objFaktura;
-        }
-        [HttpPost]
-        [Route("withoutsearch")]
-        public object GetSearchWithOutSearch([FromBody] Faktura faktura)
-        {
-            (object objFakturaList, int totalRecord) =  _reportRepository.GetReport(faktura);
-            return objFakturaList;
-        }
-        [HttpPost]
         [Route("bysearch")]
-        public object GetSearchBySearch([FromBody]Faktura faktura)
+        public async Task<object> GetSearch([FromBody]Faktura faktura)
         {
-            (object objFakturaList, int totalRecord) = _reportRepository.GetReportBySearch(faktura);
+            //We can use it for paging in the future
+            faktura.CurrentPage = 1;
+            faktura.PageSize = 50;
+
+            (object objFakturaList, int totalRecord) = await _reportRepository.GetReport(faktura);
             return objFakturaList;
         }
         

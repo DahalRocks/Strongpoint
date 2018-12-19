@@ -33,16 +33,20 @@ namespace Strongpoint.Models
             }
         }
 
-        public Tuple<object, int> GetReport(Faktura pagingInfo)
+        public async Task<Tuple<object, int>> GetReport(Faktura faktura)
         {
             using (IDbConnection conn = ConnectionToNorge)
             using (IDbConnection connSv = ConnectionToSverige)
             {
                 var searchOption = new DynamicParameters();
-                searchOption.Add("@TotalRows", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                searchOption.Add("@PageNumber", pagingInfo.CurrentPage, dbType: DbType.Int32, direction: ParameterDirection.Input);
-                searchOption.Add("@PageSize", pagingInfo.PageSize, dbType: DbType.Int32, direction: ParameterDirection.Input);
-                var result = conn.Query<Faktura, Leverendør, Faktura>(
+                    searchOption.Add("@TotalRows", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                    searchOption.Add("@PageNumber", faktura.CurrentPage, dbType: DbType.Int32, direction: ParameterDirection.Input);
+                    searchOption.Add("@PageSize", faktura.PageSize, dbType: DbType.Int32, direction: ParameterDirection.Input);
+                    searchOption.Add("@Nummer", faktura.Faktura_Nummer, dbType: DbType.Int32, direction: ParameterDirection.Input);
+                    searchOption.Add("@LeverendørId", faktura.Leverendør_Id, dbType: DbType.Int32, direction: ParameterDirection.Input);
+                    searchOption.Add("@FraDato", faktura.FraDato, dbType: DbType.DateTime, direction: ParameterDirection.Input);
+                    searchOption.Add("@TillDato", faktura.TillDato, dbType: DbType.DateTime, direction: ParameterDirection.Input);
+                var result = await conn.QueryAsync<Faktura, Leverendør, Faktura>(
                     "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
                     (f, l) =>
                     {
@@ -52,7 +56,7 @@ namespace Strongpoint.Models
                     commandType: CommandType.StoredProcedure
                     );
                 var totalRecordInNorge = searchOption.Get<int>("@TotalRows");
-                var resultSv = connSv.Query<Faktura, Leverendør, Faktura>(
+                var resultSv = await connSv.QueryAsync<Faktura, Leverendør, Faktura>(
                     "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
                     (f, l) =>
                     {
@@ -67,89 +71,5 @@ namespace Strongpoint.Models
                 return new Tuple<object, int>(finalResult, totalRecords);
             }
         }
-       
-        public Tuple<object, int> GetReportBySearch(Faktura faktura)
-        {
-            var searchOption = new DynamicParameters();
-            searchOption.Add("@TotalRows", dbType: DbType.Int32, direction: ParameterDirection.Output);
-            searchOption.Add("@PageNumber", faktura.CurrentPage, dbType: DbType.Int32, direction: ParameterDirection.Input);
-            searchOption.Add("@PageSize", faktura.PageSize, dbType: DbType.Int32, direction: ParameterDirection.Input);
-            searchOption.Add("@Nummer", faktura.Faktura_Nummer, dbType: DbType.Int32, direction: ParameterDirection.Input);
-            searchOption.Add("@LeverendørId", faktura.Leverendør_Id, dbType: DbType.Int32, direction: ParameterDirection.Input);
-            searchOption.Add("@FraDato", faktura.FraDato, dbType: DbType.DateTime, direction: ParameterDirection.Input);
-            searchOption.Add("@TillDato", faktura.TillDato, dbType: DbType.DateTime, direction: ParameterDirection.Input);
-            var pageSize = faktura.PageSize;
-            var pageNumber = faktura.CurrentPage;
-            using (IDbConnection conn = ConnectionToNorge)
-            using (IDbConnection connSv = ConnectionToSverige)
-            {
-                var result = conn.Query<Faktura, Leverendør, Faktura>(
-                    "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
-                    (f, l) =>
-                    {
-                        f.Leverendør = l;
-                        return f;
-                    }, searchOption,
-                    commandType: CommandType.StoredProcedure
-                    );
-                var totalRecordInNorge = searchOption.Get<int>("@TotalRows");
-                var resultSv = connSv.Query<Faktura, Leverendør, Faktura>(
-                    "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
-                    (f, l) =>
-                    {
-                        f.Leverendør = l;
-                        return f;
-                    }, searchOption,
-                    commandType: CommandType.StoredProcedure
-                    );
-                var totalRecordInSverige = searchOption.Get<int>("@TotalRows");
-                var finalResult = result.Concat(resultSv);
-                var totalRecords = totalRecordInNorge + totalRecordInSverige;
-                return new Tuple<object, int>(finalResult, totalRecords); 
-            }
-        }
-        /*public async Task<Tuple<object, int>> GetReport()
-       {
-           using (IDbConnection conn = ConnectionToNorge)
-           using (IDbConnection connSv = ConnectionToSverige)
-           {
-
-               var searchOption = new DynamicParameters();
-               searchOption.Add("@TotalRows", dbType: DbType.Int32, direction: ParameterDirection.Output);
-               searchOption.Add("@PageNumber", 1, dbType: DbType.Int32, direction: ParameterDirection.Input);
-               searchOption.Add("@PageSize", 2, dbType: DbType.Int32, direction: ParameterDirection.Input);
-
-
-
-               var result = await conn.QueryAsync<Faktura, Leverendør, Faktura>(
-                   "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
-                   (f, l) =>
-                   {
-                       f.Leverendør = l;
-                       return f;
-                   }, searchOption,
-                   commandType: CommandType.StoredProcedure
-                   );
-
-               var totalRecordInNorge = searchOption.Get<int>("@TotalRows");
-
-
-
-               var resultSv = await connSv.QueryAsync<Faktura, Leverendør, Faktura>(
-                   "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
-                   (f, l) =>
-                   {
-                       f.Leverendør = l;
-                       return f;
-                   }, searchOption,
-                   commandType: CommandType.StoredProcedure
-                   );
-               var totalRecordInSverige = searchOption.Get<int>("@TotalRows");
-               var totalRecords = totalRecordInNorge + totalRecordInSverige;
-               var finalResult = result.Concat(resultSv);
-               return new Tuple<object, int>(finalResult, totalRecords);
-
-           }
-       }*/
     }
 }

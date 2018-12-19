@@ -14,13 +14,13 @@ namespace Strongpoint.Controllers
             return View();
         }
         [HttpPost]
-        public FileResult Export(string GridHtml)
+        public FileResult Export(string hiddenHtml)
         {
             
             // Get an encoding for code page 1252 (Western Europe character set).
             Encoding cp1252 = Encoding.GetEncoding(1252);
 
-            FileResult resultFile= File(cp1252.GetBytes(GridHtml), "application/vnd.ms-excel", "Table.xls");
+            FileResult resultFile= File(cp1252.GetBytes(hiddenHtml), "application/vnd.ms-excel", "Table.xls");
             resultFile.FileDownloadName = "XmlReport.xls";
             return resultFile;
         }
