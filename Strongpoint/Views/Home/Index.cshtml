@@ -46,8 +46,9 @@
         //Get Leverandør for DropBox
         $.ajax({
             type: "Get",
-            url: "/api/Leverendør",
-            contentType: "json",
+            url: "/api/LeverendørApi",
+            contentType: "application / json; charset=utf - 8",
+            cache: false,
             success: function (data) {
                 $('<option />', { value: '', text: 'SELECT' }).appendTo(leverendørDropDown);
                 $.each(data, function (i, item) {

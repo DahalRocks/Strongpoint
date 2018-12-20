@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Strongpoint.Models;
+using Strongpoint.Models.Repository;
 
 namespace Strongpoint
 {
@@ -32,13 +33,10 @@ namespace Strongpoint
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
             services.AddMvc().AddSessionStateTempDataProvider();
-            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddDbContext<SQLDBNORGEContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionToNorge")));
-            services.AddDbContext<SQLDBSVERIGEContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionToSverige")));
             services.AddTransient<IReportRepository, ReportRepository>();
+            services.AddTransient<ILeverendørRepository,LeverendørRepository>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession(options =>
             {
@@ -70,14 +68,12 @@ namespace Strongpoint
                     name: "ControllerAndAction",
                     template: "api/{controller}/{action}");
             });
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
         }
     }
 }
