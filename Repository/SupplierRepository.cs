@@ -1,19 +1,19 @@
 ﻿using Dapper;
+using DomainModel;
+using Interfaces;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Strongpoint.Models.Repository
+namespace Repository
 {
-    public class LeverendørRepository:ILeverendørRepository
+    public class SupplierRepository : ISupplierRepository
     {
-        
+
         private readonly IConfiguration _config;
-        public LeverendørRepository(IConfiguration config)
+        public SupplierRepository(IConfiguration config)
         {
             _config = config;
         }
@@ -24,15 +24,15 @@ namespace Strongpoint.Models.Repository
                 return new SqlConnection(_config.GetConnectionString("ConnectionToNorge"));
             }
         }
-        public async Task<object> GetLeverendør()
+        public async Task<IEnumerable<ISupplier>> GetSupplier()
         {
             using (IDbConnection conn = ConnectionToNorge)
             {
-                    var result = await conn.QueryAsync<Leverendør>(
-                    "GetLeverendør_Norge",
-                    commandType: CommandType.StoredProcedure
-                    );
-                return result;
+                IEnumerable<ISupplier> lstSupplier = await conn.QueryAsync<Supplier>(
+                "GetLeverendør_Norge",
+                commandType: CommandType.StoredProcedure
+                );
+                return lstSupplier;
             }
         }
     }

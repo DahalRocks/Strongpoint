@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Strongpoint.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Strongpoint.Controllers
 {

@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Dapper;
-using Microsoft.AspNetCore.Http;
+using DomainModel;
+using Interfaces;
+using System.Collections.Generic;
 
-namespace Strongpoint.Models
+namespace Repository
 {
     public class ReportRepository : IReportRepository
     {
@@ -33,7 +34,7 @@ namespace Strongpoint.Models
             }
         }
 
-        public async Task<Tuple<object, int>> GetReport(Faktura faktura)
+        public async Task<Tuple<IEnumerable<IInvoice>, int>> GetReport(IInvoice faktura)
         {
             using (IDbConnection conn = ConnectionToNorge)
             using (IDbConnection connSv = ConnectionToSverige)
@@ -46,7 +47,7 @@ namespace Strongpoint.Models
                     searchOption.Add("@LeverendørId", faktura.Leverendør_Id, dbType: DbType.Int32, direction: ParameterDirection.Input);
                     searchOption.Add("@FraDato", faktura.FraDato, dbType: DbType.DateTime, direction: ParameterDirection.Input);
                     searchOption.Add("@TillDato", faktura.TillDato, dbType: DbType.DateTime, direction: ParameterDirection.Input);
-                var result = await conn.QueryAsync<Faktura, Leverendør, Faktura>(
+                var result = await conn.QueryAsync<Invoice, Supplier, Invoice>(
                     "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
                     (f, l) =>
                     {
@@ -56,7 +57,7 @@ namespace Strongpoint.Models
                     commandType: CommandType.StoredProcedure
                     );
                 var totalRecordInNorge = searchOption.Get<int>("@TotalRows");
-                var resultSv = await connSv.QueryAsync<Faktura, Leverendør, Faktura>(
+                var resultSv = await connSv.QueryAsync<Invoice, Supplier, Invoice>(
                     "FakturaRecord_SearchOptions_FakNum_LevId_Dato",
                     (f, l) =>
                     {
@@ -68,7 +69,8 @@ namespace Strongpoint.Models
                 var totalRecordInSverige = searchOption.Get<int>("@TotalRows");
                 var totalRecords = totalRecordInNorge + totalRecordInSverige;
                 var finalResult = result.Concat(resultSv);
-                return new Tuple<object, int>(finalResult, totalRecords);
+                IEnumerable<IInvoice> invoices = finalResult.ToList<IInvoice>();
+                return new Tuple<IEnumerable<IInvoice>, int>(invoices, totalRecords);
             }
         }
     }

@@ -2,8 +2,11 @@
 using System;
 using System.IO;
 
-namespace Strongpoint.Models
+namespace Strongpoint.Controllers
 {
+    /// <summary>
+    /// This class has not been used in this project. This is for future use.
+    /// </summary>
     public class LogError
     {
         private static readonly object objLock = new object();
@@ -23,7 +26,7 @@ namespace Strongpoint.Models
                 return logError;
             }
         }
-        public void Log(Exception ex,IHostingEnvironment env)
+        public void Log(Exception ex, IHostingEnvironment env)
         {
             try
             {

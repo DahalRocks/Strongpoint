@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Interfaces;
 using Microsoft.AspNetCore.Builder;
+using ExceptionHandling;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Strongpoint.Models;
-using Strongpoint.Models.Repository;
+using Repository;
+using System.IO;
+using NLog;
+using LoggerContract;
+using LoggerService;
 
 namespace Strongpoint
 {
@@ -19,6 +19,7 @@ namespace Strongpoint
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -36,8 +37,9 @@ namespace Strongpoint
             services.AddMvc().AddSessionStateTempDataProvider();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<IReportRepository, ReportRepository>();
-            services.AddTransient<ILeverendørRepository,LeverendørRepository>();
+            services.AddTransient<ISupplierRepository,SupplierRepository>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -61,7 +63,7 @@ namespace Strongpoint
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

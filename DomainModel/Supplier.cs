@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Interfaces;
 
-namespace Strongpoint.Models
+namespace DomainModel
 {
-    public class Leverendør
+   public class Supplier:ISupplier
     {
         public int Id { get; set; }
         public string Navn { get; set; }
