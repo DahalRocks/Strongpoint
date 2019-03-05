@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PresentationModel", "Presen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionHandling", "ExceptionHandling\ExceptionHandling.csproj", "{E7118003-0D2E-4B93-86D8-057B7A3151A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerService", "LoggerService\LoggerService.csproj", "{1223CC85-E2AE-400F-9B08-08421A910A3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoggerService", "LoggerService\LoggerService.csproj", "{1223CC85-E2AE-400F-9B08-08421A910A3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerContract", "LoggerContract\LoggerContract.csproj", "{9AA05E07-1D1F-4377-945E-AD847B805F32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoggerContract", "LoggerContract\LoggerContract.csproj", "{9AA05E07-1D1F-4377-945E-AD847B805F32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

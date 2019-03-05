@@ -18,7 +18,7 @@ namespace Strongpoint.Controllers
         }
         [HttpPost]
         [Route("bysearch")]
-        public async Task<object> GetSearch([FromBody]Invoice invoice)
+        public async Task<IEnumerable<IInvoice>> GetSearch([FromBody]Invoice invoice)
         {
             invoice.CurrentPage = 1;
             invoice.PageSize = 50;
