@@ -15,6 +15,7 @@ namespace Strongpoint
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
+            //changes for test
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
